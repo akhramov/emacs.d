@@ -37,20 +37,42 @@ Path is built by appending SEGMENTS to 'default-directory'"
   :bind
   ("C-x b" . akhramov-projectile-switch-to-buffer))
 
-;; Helm
-(use-package helm
-  :ensure t)
+;; Ivy
 
-(use-package helm-projectile
+(use-package ivy :ensure t)
+
+(use-package ivy-mt
+  :load-path
+  (lambda () (config--path "packages"))
+  :bind
+  ("C-x p" . ivy-mt)
+  :config
+  (defun ivy-mt-buffer-list ()
+    "Retrieve buffers list."
+    (if (projectile-project-p)
+	(projectile-project-buffers)
+      (buffer-list)))
+
+  (defun ivy-mt-launch-term ()
+    "Launch new terminal."
+    (if (projectile-project-p)
+	(cd (projectile-project-root)))
+
+    (call-interactively 'multi-term)))
+
+(use-package counsel :ensure t)
+
+(use-package counsel-projectile
   :ensure t
   :bind
-  ("C-x C-p" . helm-projectile)
-  ("C-x C-o" . helm-projectile-ag))
+  ("C-x C-p" . counsel-projectile-find-file)
+  ("C-x C-o" . counsel-projectile-ag))
 
-(use-package helm-mt
+;; Smex
+(use-package smex
   :ensure t
   :bind
-  ("C-x p" . helm-mt))
+  ("M-x" . smex))
 
 ;; Comment util
 (use-package comment-dwim-2
