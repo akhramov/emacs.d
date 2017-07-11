@@ -48,7 +48,7 @@ Path is built by appending SEGMENTS to 'default-directory'"
   :bind
   ("C-x p" . helm-mt))
 
-(use-package helm-mt
+(use-package helm-projectile-ag
   :bind
   ("C-x C-o" . helm-projectile-ag))
 
@@ -76,6 +76,11 @@ Path is built by appending SEGMENTS to 'default-directory'"
 (use-package enh-ruby-mode
   :init
   (add-hook 'ruby-mode-hook 'enh-ruby-mode))
+
+;; JS2 mode
+(use-package js2-mode
+  :init
+  (add-hook 'js-mode-hook 'js2-minor-mode))
 
 ;; Emacs server configuration
 (use-package server
