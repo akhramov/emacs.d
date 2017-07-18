@@ -38,7 +38,6 @@ Path is built by appending SEGMENTS to 'default-directory'"
   ("C-x b" . akhramov-projectile-switch-to-buffer))
 
 ;; Ivy
-
 (use-package ivy :ensure t)
 
 (use-package ivy-mt
@@ -124,9 +123,14 @@ Path is built by appending SEGMENTS to 'default-directory'"
 ;; Disable Menu bar
 (menu-bar-mode -1)
 
+(use-package spacemacs-theme
+  :defer t
+  :init
+  (load-theme 'spacemacs-dark))
+
 ;; Remove trailing spaces
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;; Load theme
-(load-theme 'leuven t)
-(load-theme 'leuven-dark t)
+;; Enable downcase-region and upcase-region commands
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
