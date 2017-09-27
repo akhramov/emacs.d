@@ -22,6 +22,10 @@ Path is built by appending SEGMENTS to 'default-directory'"
 			      (_ acc))))
     (config--path config--dir segments)))
 
+;; Git magic
+(use-package magit
+  :ensure t)
+
 ;; Navigate between splitted buffers easily
 (use-package windmove
   :config
@@ -123,6 +127,7 @@ Path is built by appending SEGMENTS to 'default-directory'"
 (menu-bar-mode -1)
 
 (use-package spacemacs-theme
+  :ensure t
   :defer t
   :init
   (load-theme 'spacemacs-dark))
