@@ -40,6 +40,11 @@ Path is built by appending SEGMENTS to 'default-directory'"
   :bind
   ("C-x b" . akhramov-projectile-switch-to-buffer))
 
+;; C/C++
+(use-package ruby-style
+  :load-path
+  (lambda () (config--path "packages/vendor")))
+
 ;; Ivy
 (use-package ivy :ensure t)
 
@@ -131,6 +136,12 @@ Path is built by appending SEGMENTS to 'default-directory'"
   :defer t
   :init
   (load-theme 'spacemacs-dark))
+
+(use-package reverse-im
+  :ensure t
+  :config
+  (add-to-list 'reverse-im-input-methods "russian-computer")
+  (reverse-im-mode t))
 
 ;; Remove trailing spaces
 (add-hook 'before-save-hook 'delete-trailing-whitespace)

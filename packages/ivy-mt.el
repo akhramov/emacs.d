@@ -20,6 +20,7 @@
 		     (switch-to-buffer x))
 		    (t
 		     (ivy-mt-launch-term)
+		     (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix)
 		     (rename-buffer (generate-new-buffer-name x)))))
 	    :caller
 	    'ivy-mt-jump)))
