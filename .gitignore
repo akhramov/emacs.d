@@ -2,3 +2,9 @@
 smex-items
 .mc-lists.el
 .cask
+packages/vendor
+projectile-bookmarks.eld
+README.el
+.emacs-buffers
+bookmarks
+.emacs.desktop*

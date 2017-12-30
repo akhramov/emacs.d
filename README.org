@@ -1,0 +1,244 @@
+#+TITLE: Emacs configuration
+#+AUTHOR: Artem Khramov
+#+OPTIONS: toc:3
+
+* Bootstraping and tools
+** Auxiliary functions
+The first task every Emacser tackle is finding config directory.
+#+BEGIN_SRC emacs-lisp
+(defun config--path (item)
+  "Build path relative to configs path.
+  Path is built by appending ITEM to 'user-emacs-directory'"
+  (expand-file-name item user-emacs-directory))
+#+END_SRC
+
+** Packages
+*** Package sources
+Use MELPA as primary source
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+#+END_SRC
+*** use-package
+Don't forget to install ~use-package~. ~use-package~ is the core of
+this config.
+#+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'use-package) (package-install 'use-package))
+#+END_SRC
+
+* Tuning defaults
+** Turning off menubar
+As a heavy keyboard user, I never used the menubar anyway.
+#+BEGIN_SRC emacs-lisp
+(menu-bar-mode -1)
+#+END_SRC
+** Enabling downcase and upcase region commands
+I'm not sure why beginners find ~downcase-region~ and
+~upcase-region~ commands confusing. Let's enable them.
+#+BEGIN_SRC emacs-lisp
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+#+END_SRC
+** Deleting trailing whitespaces before save
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+** Customize
+Customizations will be stored in ~customizations.el~
+#+BEGIN_SRC emacs-lisp
+(use-package customizations
+  :defer t
+  :init
+  (setq custom-file (config--path "customizations.el"))
+  (load custom-file))
+#+END_SRC
+** Moving between windows
+At first default keybinding for moving between windows (~C-x o~)
+looked strange for me. So I opted to use ~windmove~ library, which
+allows to select windows using shift + arrow keys. (~S-left~ and so
+on).
+#+BEGIN_SRC emacs-lisp
+(use-package windmove
+  :config
+  (windmove-default-keybindings))
+#+END_SRC
+
+** Saving sessions
+When it comes to session persisting, Emacs, no surprise, already has a
+solution. Built-in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html][desktop library]] provides such functionality.
+#+BEGIN_SRC emacs-lisp
+(use-package desktop
+  :init
+  (desktop-save-mode t))
+#+END_SRC
+
+** Daemon configuration
+Emacs can be run as a daemon. Once run, we can attach clients to the
+daemon. This drastically increases editor startup time.
+#+BEGIN_SRC emacs-lisp
+(use-package server
+  :init
+  (setq server-socket-dir (config--path "server")))
+#+END_SRC
+
+* Features
+** Command completion
+*** Ivy
+This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion frontend.
+#+BEGIN_SRC emacs-lisp
+(use-package ivy :ensure t)
+#+END_SRC
+
+~multi-term~ is for managing terminal buffers. ~Ivy~ is for managing
+~multi-term~.
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-mt
+  :load-path
+  (lambda () (config--path "packages"))
+  :bind
+  ("C-x p" . ivy-mt)
+  :config
+  (defun ivy-mt-buffer-list ()
+    "Retrieve buffers list."
+    (if (projectile-project-p)
+	(projectile-project-buffers)
+      (buffer-list)))
+
+  (defun ivy-mt-launch-term ()
+    "Launch new terminal."
+    (if (projectile-project-p)
+	(cd (projectile-project-root)))
+
+    (call-interactively 'multi-term)))
+#+END_SRC
+
+Other completion functions
+#+BEGIN_SRC emacs-lisp
+(use-package counsel :ensure t)
+
+(use-package counsel-projectile
+  :ensure t
+  :bind
+  ("C-x C-p" . counsel-projectile-find-file)
+  ("C-x C-o" . counsel-projectile-ag))
+#+END_SRC
+
+*** M-x enhancement
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+  :ensure t
+  :bind
+  ("M-x" . smex))
+#+END_SRC
+
+** Project interaction
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :init
+  (projectile-mode))
+#+END_SRC
+
+Switch to project buffers using ~projectile-switch-to-buffer~,
+fallback to ~switch-to-buffer~ otherwise.
+#+BEGIN_SRC emacs-lisp
+(use-package akhramov-projectile-switch-to-buffer
+  :load-path
+  (lambda () (config--path "packages"))
+  :bind
+  ("C-x b" . akhramov-projectile-switch-to-buffer))
+#+END_SRC
+
+** Editing plugins
+Drop-in replacement for standard ~comment-dwim~
+#+BEGIN_SRC emacs-lisp
+(use-package comment-dwim-2
+  :ensure t
+  :bind
+  ("M-;" . comment-dwim-2))
+#+END_SRC
+
+Multicursor support
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  ("M-]" . mc/mark-next-like-this))
+#+END_SRC
+
+** Linting
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'global-flycheck-mode))
+#+END_SRC
+
+** VCS
+*** Git
+#+BEGIN_SRC emacs-lisp
+(use-package magit :ensure t)
+#+END_SRC
+** Terminal support
+#+BEGIN_SRC emacs-lisp
+(use-package multi-term
+  :ensure t
+  :init
+  (setf multi-term-program (executable-find "fish"))
+  (setf system-uses-terminfo nil))
+#+END_SRC
+* Languages
+** Agda
+#+BEGIN_SRC emacs-lisp
+(use-package agda2-mode
+  :mode "\\.agda\\'"
+  :load-path
+  (lambda () (file-name-directory (shell-command-to-string "agda-mode locate")))
+  :init
+  (bind-key "C-c ." 'agda2-goal-and-context-and-inferred)
+  (bind-key "C-c C-s" 'agda2-solve-maybe-all))
+#+END_SRC
+
+** C / C++
+I don't always write C code, but when I do it's always in Ruby style
+#+BEGIN_SRC emacs-lisp
+(use-package ruby-style
+  :load-path
+  (lambda () (config--path "packages/vendor")))
+#+END_SRC
+
+** Elm
+#+BEGIN_SRC emacs-lisp
+(use-package elm-mode :ensure t)
+#+END_SRC
+
+** Javascript
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode
+  :ensure t
+  :init
+  (add-hook 'js-mode-hook 'js2-minor-mode))
+#+END_SRC
+
+** Ruby
+#+BEGIN_SRC emacs-lisp
+(use-package enh-ruby-mode
+  :ensure t
+  :init
+  (add-hook 'ruby-mode-hook 'enh-ruby-mode))
+#+END_SRC
+
+** Vue
+#+BEGIN_SRC emacs-lisp
+(use-package vue-mode :ensure t)
+#+END_SRC
+
+* Theme
+
+#+BEGIN_SRC emacs-lisp
+(use-package cyberpunk-theme
+  :ensure t
+  :defer t
+  :init
+  (load-theme 'cyberpunk t))
+#+END_SRC

@@ -3,6 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(agda2-highlight-level (quote non-interactive))
  '(c-default-style
    (quote
     ((c-mode . "ruby")
@@ -18,9 +19,12 @@
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
  '(multi-term-switch-after-close nil)
+ '(org-agenda-files (quote ("~/Documents/agenda.org")))
+ '(org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "DONE"))))
  '(package-selected-packages
    (quote
-    (window-jump reverse-im suscolors-theme ample-theme helm-mt yaml-mode wanderlust w3m use-package tern spacemacs-theme spaceline scss-mode sass-mode ruby-additional racket-mode php-mode persp-projectile org neotree mustache-mode multiple-cursors multi-term mu4e-maildirs-extension mu4e-alert minitest magit lua-mode leuven-theme js2-mode ivy indent-guide helm-projectile helm-ag ghc geiser flymd flycheck exec-path-from-shell erlang enh-ruby-mode elm-mode dtrace-script-mode comment-dwim-2 column-marker color-theme-sanityinc-solarized color-theme coffee-mode ascii-art-to-unicode alchemist ag ack-menu ack)))
+    (htmlize desktop+ haskell-mode vue-mode window-jump reverse-im suscolors-theme ample-theme helm-mt yaml-mode wanderlust w3m use-package tern spacemacs-theme spaceline scss-mode sass-mode ruby-additional racket-mode php-mode persp-projectile org neotree mustache-mode multiple-cursors multi-term mu4e-maildirs-extension mu4e-alert minitest magit lua-mode leuven-theme js2-mode ivy indent-guide helm-projectile helm-ag ghc geiser flymd flycheck exec-path-from-shell erlang enh-ruby-mode elm-mode dtrace-script-mode comment-dwim-2 column-marker color-theme-sanityinc-solarized color-theme coffee-mode ascii-art-to-unicode alchemist ag ack-menu ack)))
+ '(projectile-switch-project-action (quote projectile-dired))
  '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(term-bind-key-alist
    (quote
@@ -51,10 +55,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(magit-diff-added ((t (:foreground "green"))))
- '(magit-diff-added-highlight ((t (:foreground "green"))))
- '(magit-diff-context-highlight ((t (:foreground "grey70"))))
- '(magit-diff-file-heading-highlight ((t (:background "#202020" :foreground "#008787"))))
- '(magit-diff-removed ((t (:foreground "red"))))
- '(magit-diff-removed-highlight ((t (:foreground "red"))))
- '(show-paren-match ((t (:background "#363626")))))
+ '(ivy-current-match ((t (:background "black" :foreground "brightblue"))))
+ '(magit-section-highlight ((t nil)))
+ '(org-block ((t (:background "black" :foreground "#dcdccc"))))
+ '(org-block-begin-line ((t (:background "black" :foreground "#008ED1"))))
+ '(org-block-end-line ((t (:background "black" :foreground "#008ED1")))))
