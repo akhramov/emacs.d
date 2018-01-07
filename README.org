@@ -14,12 +14,26 @@ The first task every Emacser tackle is finding config directory.
 
 ** Packages
 *** Package sources
-Use MELPA as primary source
 #+BEGIN_SRC emacs-lisp
 (require 'package)
+#+END_SRC
+
+Use MELPA as primary source
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 #+END_SRC
+
+Add org-contrib repo.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+#+END_SRC
+
+We're all set up.
+#+BEGIN_SRC emacs-lisp
+(package-initialize)
+#+END_SRC
+
 *** use-package
 Don't forget to install ~use-package~. ~use-package~ is the core of
 this config.
@@ -73,14 +87,6 @@ solution. Built-in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/S
   (desktop-save-mode t))
 #+END_SRC
 
-** Daemon configuration
-Emacs can be run as a daemon. Once run, we can attach clients to the
-daemon. This drastically increases editor startup time.
-#+BEGIN_SRC emacs-lisp
-(use-package server
-  :init
-  (setq server-socket-dir (config--path "server")))
-#+END_SRC
 
 * Features
 ** Command completion
@@ -187,6 +193,31 @@ Multicursor support
   (setf multi-term-program (executable-find "fish"))
   (setf system-uses-terminfo nil))
 #+END_SRC
+** Org
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-mode
+  :ensure org-plus-contrib
+  :bind ("C-c a" . org-agenda))
+#+END_SRC
+
+** Misc
+*** Alerts
+
+#+BEGIN_SRC emacs-lisp
+(use-package alert :ensure t)
+#+END_SRC
+
+Wild notifier. Spiky, but works. Upon click ~wild-notifier~
+1. Focuses terminal
+2. Executes commands (e.g. ~switch-buffer~)
+#+BEGIN_SRC emacs-lisp
+(when (string-equal system-type "darwin")
+  (use-package wild-notifier
+    :init (setf alert-default-style 'wild)
+    :load-path (lambda () (config--path "packages"))))
+#+END_SRC
+
 * Languages
 ** Agda
 #+BEGIN_SRC emacs-lisp
@@ -218,6 +249,24 @@ I don't always write C code, but when I do it's always in Ruby style
   :ensure t
   :init
   (add-hook 'js-mode-hook 'js2-minor-mode))
+#+END_SRC
+
+** Lisps
+Parens and indentation with parinfer:
+#+BEGIN_SRC emacs-lisp
+(use-package parinfer
+  :ensure t
+  :init
+  (progn
+    (setq parinfer-extensions
+          '(defaults       ; should be included.
+            pretty-parens  ; different paren styles for different modes.
+            smart-yank))   ; Yank behavior depend on mode.
+    (add-hook 'clojure-mode-hook #'parinfer-mode)
+    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'scheme-mode-hook #'parinfer-mode)
+    (add-hook 'lisp-mode-hook #'parinfer-mode)))
 #+END_SRC
 
 ** Ruby
