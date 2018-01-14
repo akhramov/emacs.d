@@ -96,29 +96,6 @@ This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion fronte
 (use-package ivy :ensure t)
 #+END_SRC
 
-~multi-term~ is for managing terminal buffers. ~Ivy~ is for managing
-~multi-term~.
-#+BEGIN_SRC emacs-lisp
-(use-package ivy-mt
-  :load-path
-  (lambda () (config--path "packages"))
-  :bind
-  ("C-x p" . ivy-mt)
-  :config
-  (defun ivy-mt-buffer-list ()
-    "Retrieve buffers list."
-    (if (projectile-project-p)
-	(projectile-project-buffers)
-      (buffer-list)))
-
-  (defun ivy-mt-launch-term ()
-    "Launch new terminal."
-    (if (projectile-project-p)
-	(cd (projectile-project-root)))
-
-    (call-interactively 'multi-term)))
-#+END_SRC
-
 Other completion functions
 #+BEGIN_SRC emacs-lisp
 (use-package counsel :ensure t)
@@ -185,14 +162,25 @@ Multicursor support
 #+BEGIN_SRC emacs-lisp
 (use-package magit :ensure t)
 #+END_SRC
-** Terminal support
+** Shells, terminals etc
+
+Eshell fish-like autosuggestions
 #+BEGIN_SRC emacs-lisp
-(use-package multi-term
-  :ensure t
-  :init
-  (setf multi-term-program (executable-find "fish"))
-  (setf system-uses-terminfo nil))
+(use-package esh-autosuggest
+  :hook (eshell-mode . esh-autosuggest-mode)
+  :ensure t)
 #+END_SRC
+
+I used to run terminals in Emacs for long. Let's take a step towards eshell.
+Meshelle glues projectile and eshell with ivy.
+#+BEGIN_SRC emacs-lisp
+(use-package meshelle
+  :load-path
+  (lambda () (config--path "packages"))
+  :bind
+  ("C-x p" . meshelle))
+#+END_SRC
+
 ** Org
 
 #+BEGIN_SRC emacs-lisp
@@ -284,10 +272,22 @@ Parens and indentation with parinfer:
 
 * Theme
 
+This theme is as cool as it sounds
 #+BEGIN_SRC emacs-lisp
 (use-package cyberpunk-theme
   :ensure t
   :defer t
   :init
   (load-theme 'cyberpunk t))
+#+END_SRC
+
+Tweak modline with smart-mode-line package
+#+BEGIN_SRC emacs-lisp
+(use-package sml
+  :ensure t
+  :defer t
+  :config
+  :init
+  (setq sml/theme 'respectful)
+  (sml/setup))
 #+END_SRC

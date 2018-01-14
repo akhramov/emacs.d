@@ -8,3 +8,6 @@ README.el
 .emacs-buffers
 bookmarks
 .emacs.desktop*
+eshell
+history
+.org-id-locations
