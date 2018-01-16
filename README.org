@@ -283,7 +283,7 @@ This theme is as cool as it sounds
 
 Tweak modline with smart-mode-line package
 #+BEGIN_SRC emacs-lisp
-(use-package sml
+(use-package smart-mode-line
   :ensure t
   :defer t
   :config

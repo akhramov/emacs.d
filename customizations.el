@@ -15,11 +15,14 @@
     ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "9541f1dc11258239ef02aa1a5e9db3e1e46bc8fb1d7dbe83946c1541ae6dbdf9" default)))
  '(desktop-restore-frames t)
  '(enh-ruby-deep-indent-paren nil)
+ '(eyebrowse-keymap-prefix "")
  '(flycheck-disabled-checkers (quote (ruby-rubylint)))
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
  '(multi-term-switch-after-close nil)
- '(org-agenda-files (quote ("~/Documents/planning/personal.org")))
+ '(org-agenda-files
+   (quote
+    ("~/Documents/planning/work.org" "~/Documents/planning/personal.org")))
  '(org-todo-keywords (quote ((sequence "TODO" "IN PROGRESS" "DONE"))))
  '(package-selected-packages
    (quote
