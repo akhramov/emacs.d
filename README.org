@@ -3,15 +3,6 @@
 #+OPTIONS: toc:3
 
 * Bootstraping and tools
-** Auxiliary functions
-The first task every Emacser tackle is finding config directory.
-#+BEGIN_SRC emacs-lisp
-(defun config--path (item)
-  "Build path relative to configs path.
-  Path is built by appending ITEM to 'user-emacs-directory'"
-  (expand-file-name item user-emacs-directory))
-#+END_SRC
-
 ** Packages
 *** Package sources
 #+BEGIN_SRC emacs-lisp
@@ -64,7 +55,7 @@ Customizations will be stored in ~customizations.el~
 (use-package customizations
   :defer t
   :init
-  (setq custom-file (config--path "customizations.el"))
+  (setq custom-file (locate-user-emacs-file "customizations.el"))
   (load custom-file))
 #+END_SRC
 ** Moving between windows
@@ -127,7 +118,7 @@ fallback to ~switch-to-buffer~ otherwise.
 #+BEGIN_SRC emacs-lisp
 (use-package akhramov-projectile-switch-to-buffer
   :load-path
-  (lambda () (config--path "packages"))
+  (lambda () (locate-user-emacs-file "packages"))
   :bind
   ("C-x b" . akhramov-projectile-switch-to-buffer))
 #+END_SRC
@@ -176,7 +167,7 @@ Meshelle glues projectile and eshell with ivy.
 #+BEGIN_SRC emacs-lisp
 (use-package meshelle
   :load-path
-  (lambda () (config--path "packages"))
+  (lambda () (locate-user-emacs-file "packages"))
   :bind
   ("C-x p" . meshelle))
 #+END_SRC
@@ -203,7 +194,7 @@ Wild notifier. Spiky, but works. Upon click ~wild-notifier~
 (when (string-equal system-type "darwin")
   (use-package wild-notifier
     :init (setf alert-default-style 'wild)
-    :load-path (lambda () (config--path "packages"))))
+    :load-path (lambda () (locate-user-emacs-file "packages"))))
 #+END_SRC
 
 * Languages
@@ -223,7 +214,7 @@ I don't always write C code, but when I do it's always in Ruby style
 #+BEGIN_SRC emacs-lisp
 (use-package ruby-style
   :load-path
-  (lambda () (config--path "packages/vendor")))
+  (lambda () (locate-user-emacs-file "packages/vendor")))
 #+END_SRC
 
 ** Elm
