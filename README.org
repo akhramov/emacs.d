@@ -49,6 +49,19 @@ I'm not sure why beginners find ~downcase-region~ and
 #+BEGIN_SRC emacs-lisp
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
+** Setting up environment
+#+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell
+  :ensure t
+  :init (exec-path-from-shell-initialize))
+#+END_SRC
+
+** Theme
+#+BEGIN_SRC emacs-lisp
+(use-package plan9-theme
+  :ensure t)
+#+END_SRC
+
 ** Customize
 Customizations will be stored in ~customizations.el~
 #+BEGIN_SRC emacs-lisp
@@ -57,32 +70,6 @@ Customizations will be stored in ~customizations.el~
   :init
   (setq custom-file (locate-user-emacs-file "customizations.el"))
   (load custom-file))
-#+END_SRC
-** Moving between windows
-At first default keybinding for moving between windows (~C-x o~)
-looked strange for me. So I opted to use ~windmove~ library, which
-allows to select windows using shift + arrow keys. (~S-left~ and so
-on).
-#+BEGIN_SRC emacs-lisp
-(use-package windmove
-  :config
-  (windmove-default-keybindings))
-#+END_SRC
-
-** Saving sessions
-When it comes to session persisting, Emacs, no surprise, already has a
-solution. Built-in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html][desktop library]] provides such functionality.
-#+BEGIN_SRC emacs-lisp
-(use-package desktop
-  :init
-  (desktop-save-mode t))
-#+END_SRC
-
-** Setting up environment
-#+BEGIN_SRC emacs-lisp
-(use-package exec-path-from-shell
-  :ensure t
-  :init (exec-path-from-shell-initialize))
 #+END_SRC
 
 * Features
@@ -98,7 +85,7 @@ This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion fronte
 #+BEGIN_SRC emacs-lisp
 (use-package ivy-mt
   :load-path
-  (lambda () (locate-user-emacs-file "packages"))
+  (lambda () (locate-user-emacs-file "lisp"))
   :bind
   ("C-x p" . ivy-mt)
   :config
@@ -122,9 +109,7 @@ Other completion functions
 
 (use-package counsel-projectile
   :ensure t
-  :bind
-  ("C-x C-p" . counsel-projectile-find-file)
-  ("C-x C-o" . counsel-projectile-ag))
+  :init (counsel-projectile-mode))
 #+END_SRC
 
 *** M-x enhancement
@@ -135,6 +120,7 @@ Other completion functions
   ("M-x" . smex))
 #+END_SRC
 
+
 ** Project interaction
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
@@ -142,10 +128,12 @@ Other completion functions
    (projectile-mode)
    :custom
    (projectile-switch-project-action
-    (lambda ()
-      (if-let* ((last-buffer (second (projectile-project-buffers))))
-          (switch-to-buffer last-buffer)
-        (projectile-dired)))))
+      (lambda ()
+        (progn
+         (require 'subr-x)
+         (if-let* ((last-buffer (second (projectile-project-buffers))))
+                   (switch-to-buffer last-buffer)
+           (projectile-dired))))))
 #+END_SRC
 
 Switch to project buffers using ~projectile-switch-to-buffer~,
@@ -153,10 +141,11 @@ fallback to ~switch-to-buffer~ otherwise.
 #+BEGIN_SRC emacs-lisp
 (use-package akhramov-projectile-switch-to-buffer
   :load-path
-  (lambda () (locate-user-emacs-file "packages"))
+  (lambda () (locate-user-emacs-file "package/lisp"))
   :bind
   ("C-x b" . akhramov-projectile-switch-to-buffer))
 #+END_SRC
+
 
 ** Editing plugins
 Drop-in replacement for standard ~comment-dwim~
@@ -224,7 +213,7 @@ Wild notifier. Spiky, but works. Upon click ~wild-notifier~
 (when (string-equal system-type "darwin")
   (use-package wild-notifier
     :init (setf alert-default-style 'wild)
-    :load-path (lambda () (locate-user-emacs-file "packages"))))
+    :load-path (lambda () (locate-user-emacs-file "lisp"))))
 #+END_SRC
 
 * Languages
@@ -244,7 +233,7 @@ I don't always write C code, but when I do it's always in Ruby style
 #+BEGIN_SRC emacs-lisp
 (use-package ruby-style
   :load-path
-  (lambda () (locate-user-emacs-file "packages/vendor")))
+  (lambda () (locate-user-emacs-file "lisp/vendor")))
 #+END_SRC
 
 ** Elm
@@ -282,32 +271,22 @@ Parens and indentation with parinfer:
 #+BEGIN_SRC emacs-lisp
 (use-package enh-ruby-mode
   :ensure t
-  :init
-  (add-hook 'ruby-mode-hook 'enh-ruby-mode))
+  :hook enh-ruby-mode)
+#+END_SRC
+
+** Rust
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+  :ensure t
+  :hook ((rust-mode . racer-mode)))
+
+(use-package racer
+  :ensure t
+  :hook ((racer-mode . eldoc-mode)
+         (racer-mode . company-mode)))
 #+END_SRC
 
 ** Vue
 #+BEGIN_SRC emacs-lisp
 (use-package vue-mode :ensure t)
-#+END_SRC
-
-* Theme
-
-#+BEGIN_SRC emacs-lisp
-(use-package cyberpunk-theme
-  :ensure t
-  :defer t
-  :init
-  (load-theme 'cyberpunk t))
-#+END_SRC
-
-Tweak modline with smart-mode-line package
-#+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
-  :ensure t
-  :defer t
-  :config
-  :init
-  (setq sml/theme 'respectful)
-  (sml/setup))
 #+END_SRC

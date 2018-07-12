@@ -2,7 +2,7 @@
 smex-items
 .mc-lists.el
 .cask
-packages/vendor
+lisp/vendor
 projectile-bookmarks.eld
 README.el
 .emacs-buffers
