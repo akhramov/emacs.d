@@ -1,4 +1,4 @@
-#+TITLE: Emacs configuration
+#+title: Emacs configuration
 #+AUTHOR: Artem Khramov
 #+OPTIONS: toc:3
 
@@ -37,6 +37,7 @@ this config.
 As a heavy keyboard user, I never used the menubar anyway.
 #+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
+(tool-bar-mode -1)
 #+END_SRC
 ** Enabling downcase and upcase region commands
 I'm not sure why beginners find ~downcase-region~ and
@@ -56,12 +57,6 @@ I'm not sure why beginners find ~downcase-region~ and
   :init (exec-path-from-shell-initialize))
 #+END_SRC
 
-** Theme
-#+BEGIN_SRC emacs-lisp
-(use-package plan9-theme
-  :ensure t)
-#+END_SRC
-
 ** Customize
 Customizations will be stored in ~customizations.el~
 #+BEGIN_SRC emacs-lisp
@@ -73,6 +68,16 @@ Customizations will be stored in ~customizations.el~
 #+END_SRC
 
 * Features
+** Crypto
+Enter pins inside emacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package pinentry
+  :init
+  (setenv "INSIDE_EMACS" "true")
+  (pinentry-start))
+#+END_SRC
+
 ** Command completion
 *** Ivy
 This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion frontend.
@@ -125,6 +130,7 @@ Other completion functions
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
    :init
+   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
    (projectile-mode)
    :custom
    (projectile-switch-project-action
@@ -185,11 +191,10 @@ Multicursor support
   (setf multi-term-program (executable-find "fish"))
   (setf system-uses-terminfo nil))
 #+END_SRC
-** Org
+** Org and authoring
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-mode
-  :ensure org-plus-contrib
   :bind ("C-c a" . org-agenda))
 #+END_SRC
 
@@ -197,6 +202,11 @@ Multicursor support
 (use-package org-wild-notifier
   :ensure t
   :init (org-wild-notifier-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package gnuplot
+  :ensure t)
 #+END_SRC
 
 ** Misc
@@ -228,13 +238,6 @@ Wild notifier. Spiky, but works. Upon click ~wild-notifier~
   (bind-key "C-c C-s" 'agda2-solve-maybe-all))
 #+END_SRC
 
-** C / C++
-I don't always write C code, but when I do it's always in Ruby style
-#+BEGIN_SRC emacs-lisp
-(use-package ruby-style
-  :load-path
-  (lambda () (locate-user-emacs-file "lisp/vendor")))
-#+END_SRC
 
 ** Elm
 #+BEGIN_SRC emacs-lisp
