@@ -4,9 +4,16 @@
 
 * Bootstraping and tools
 ** Packages
+*** Very first thing to do: native-comp
+#+BEGIN_SRC emacs-lisp
+(when (and (fboundp 'native-comp-available-p)
+       (native-comp-available-p))
+  (setq comp-deferred-compilation t))
+#+END_SRC
 *** Package sources
 #+BEGIN_SRC emacs-lisp
 (require 'package)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 #+END_SRC
 
 Use MELPA as primary source
@@ -17,7 +24,7 @@ Use MELPA as primary source
 
 Add org-contrib repo.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
 #+END_SRC
 
 We're all set up.
@@ -137,7 +144,7 @@ Other completion functions
       (lambda ()
         (progn
          (require 'subr-x)
-         (if-let* ((last-buffer (second (projectile-project-buffers))))
+         (if-let* ((last-buffer (nth 1 (projectile-project-buffers))))
                    (switch-to-buffer last-buffer)
            (projectile-dired))))))
 #+END_SRC
@@ -181,7 +188,10 @@ Multicursor support
 ** VCS
 *** Git
 #+BEGIN_SRC emacs-lisp
-(use-package magit :ensure t)
+(use-package magit
+  :ensure t
+  :init
+  (setf transient-default-level 5))
 #+END_SRC
 ** Terminal support
 #+BEGIN_SRC emacs-lisp
@@ -277,19 +287,37 @@ Parens and indentation with parinfer:
   :hook enh-ruby-mode)
 #+END_SRC
 
-** Rust
-#+BEGIN_SRC emacs-lisp
-(use-package rust-mode
-  :ensure t
-  :hook ((rust-mode . racer-mode)))
-
-(use-package racer
-  :ensure t
-  :hook ((racer-mode . eldoc-mode)
-         (racer-mode . company-mode)))
-#+END_SRC
 
 ** Vue
 #+BEGIN_SRC emacs-lisp
 (use-package vue-mode :ensure t)
+#+END_SRC
+
+** LSP languages
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode :ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package typescript-mode
+   :ensure t
+  :hook ((typescript-mode . lsp)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package typescript-mode
+   :ensure t
+  :hook ((typescript-mode . lsp)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-java
+   :ensure t
+  :hook ((java-mode . lsp)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+  :ensure t
+  :hook ((rust-mode . lsp)))
 #+END_SRC
