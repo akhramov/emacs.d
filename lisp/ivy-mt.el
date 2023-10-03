@@ -5,13 +5,13 @@
 ;;; Code:
 
 (set-default 'ivy-mt-buffer-list 'buffer-list)
-(set-default 'ivy-mt-launch-term 'multi-term)
+(set-default 'ivy-mt-launch-term 'multi-vterm)
 
 (defun ivy-mt ()
   "Open or create multi-term buffer."
   (interactive)
   (let ((candidates
-	 (mapcar #'buffer-name (cl-intersection (ivy-mt-buffer-list) multi-term-buffer-list))))
+	 (mapcar #'buffer-name (cl-intersection (ivy-mt-buffer-list) multi-vterm-buffer-list))))
     (ivy-read "Create or jump to MT buffer: "
   	    candidates
   	    :action
