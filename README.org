@@ -5,7 +5,10 @@
 * Bootstraping and tools
 ** Packages
 *** Very first thing to do: native-comp
+This also enables lexical binding for the tangled README.el,
+to avoid the lexical bindings warning on newer emacsen.
 #+BEGIN_SRC emacs-lisp
+;;; -*- lexical-binding: t -*-
 (when (and (fboundp 'native-comp-available-p)
        (native-comp-available-p))
   (setq comp-deferred-compilation t))
@@ -95,19 +98,19 @@ This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion fronte
 ~multi-term~ is for managing terminal buffers. ~Ivy~ is for managing
 ~multi-term~.
 #+BEGIN_SRC emacs-lisp
-(use-package ivy-mt
+(use-package mt
   :load-path
   (lambda () (locate-user-emacs-file "lisp"))
   :bind
-  ("C-x p" . ivy-mt)
+  ("C-x p" . mt)
   :config
-  (defun ivy-mt-buffer-list ()
+  (defun mt-buffer-list ()
     "Retrieve buffers list."
     (if (projectile-project-p)
 	(projectile-project-buffers)
       (buffer-list)))
 
-  (defun ivy-mt-launch-term ()
+  (defun mt-launch-term ()
     "Launch new terminal."
     (if (projectile-project-p)
 	(cd (projectile-project-root)))
@@ -117,11 +120,27 @@ This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion fronte
 
 Other completion functions
 #+BEGIN_SRC emacs-lisp
-(use-package counsel :ensure t)
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
 
-(use-package counsel-projectile
-  :ensure t
-  :init (counsel-projectile-mode))
+  (use-package savehist
+    :init
+    (savehist-mode))
+  (use-package marginalia   ; annotations next to each candidate
+    :ensure t
+    :init (marginalia-mode +1))
+  (use-package orderless
+    :ensure t
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides '((file (styles partial-completion))))
+    (completion-category-defaults nil) ;; Disable defaults, use our settings
+    (completion-pcm-leading-wildcard t))
+
+  (use-package consult
+    :ensure t)
 #+END_SRC
 
 *** M-x enhancement
@@ -135,28 +154,33 @@ Other completion functions
 
 ** Project interaction
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-   :init
-   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-   (projectile-mode)
-   :custom
-   (projectile-switch-project-action
-      (lambda ()
-        (progn
+  (use-package projectile
+    :ensure t
+    :init
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    :bind
+    (:map projectile-mode-map
+     ("C-c p s s" . consult-ripgrep))
+    :custom
+    (projectile-switch-project-action
+     (lambda ()
+       (progn
          (require 'subr-x)
          (if-let* ((last-buffer (nth 1 (projectile-project-buffers))))
-                   (switch-to-buffer last-buffer)
+             (switch-to-buffer last-buffer)
            (projectile-dired))))))
 #+END_SRC
 
 Switch to project buffers using ~projectile-switch-to-buffer~,
 fallback to ~switch-to-buffer~ otherwise.
 #+BEGIN_SRC emacs-lisp
-(use-package akhramov-projectile-switch-to-buffer
-  :load-path
-  (lambda () (locate-user-emacs-file "package/lisp"))
-  :bind
-  ("C-x b" . akhramov-projectile-switch-to-buffer))
+  (use-package akhramov-projectile-switch-to-buffer
+    :load-path
+    (lambda () (locate-user-emacs-file "package/lisp"))
+    :bind
+    ("C-x b" . akhramov-projectile-switch-to-buffer)
+    ("C-c p s s" . consult-ripgrep))
 #+END_SRC
 
 
@@ -207,12 +231,6 @@ Multicursor support
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-wild-notifier
-  :ensure t
-  :init (org-wild-notifier-mode))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
 (use-package gnuplot
   :ensure t)
 #+END_SRC
@@ -222,16 +240,6 @@ Multicursor support
 
 #+BEGIN_SRC emacs-lisp
 (use-package alert :ensure t)
-#+END_SRC
-
-Wild notifier. Spiky, but works. Upon click ~wild-notifier~
-1. Focuses terminal
-2. Executes commands (e.g. ~switch-buffer~)
-#+BEGIN_SRC emacs-lisp
-(when (string-equal system-type "darwin")
-  (use-package wild-notifier
-    :init (setf alert-default-style 'wild)
-    :load-path (lambda () (locate-user-emacs-file "lisp"))))
 #+END_SRC
 
 * Languages
