@@ -72,14 +72,14 @@
  '(org-todo-keywords '((sequence "TODO" "IN PROGRESS" "DONE")))
  '(org-wild-notifier-keyword-blacklist nil)
  '(package-selected-packages
-   '(comment-dwim-2 consult counsel counsel-projectile elm-mode
-                    enh-ruby-mode exec-path-from-shell flycheck
-                    git-link gnuplot ivy js2-mode jsonnet-mode jupyter
-                    lsp-java lsp-mode magit marginalia multi-vterm
-                    multiple-cursors orderless org-wild-notifier
-                    pinentry projectile-ripgrep rego-mode smex
-                    terraform-mode treesit-auto typescript-mode verb
-                    vertico vue-mode zig-ts-mode))
+   '(ascii-table comment-dwim-2 consult corfu counsel counsel-projectile
+                 elm-mode enh-ruby-mode exec-path-from-shell flycheck
+                 ghostel git-link gnuplot ivy js2-mode jsonnet-mode
+                 jupyter lsp-java lsp-mode magit marginalia
+                 multi-vterm multiple-cursors orderless
+                 org-wild-notifier pinentry projectile-ripgrep
+                 rego-mode smex terraform-mode treesit-auto
+                 typescript-mode verb vertico vue-mode zig-ts-mode))
  '(projectile-search-backend 'consult)
  '(safe-local-variable-values
    '((eval when

@@ -44,7 +44,7 @@ this config.
 
 * Tuning defaults
 ** Turning off menubar
-As a heavy keyboard user, I never used the menubar anyway.
+What menubar?
 #+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -102,20 +102,7 @@ This config uses [[https://github.com/abo-abo/swiper][Ivy]] as completion fronte
   :load-path
   (lambda () (locate-user-emacs-file "lisp"))
   :bind
-  ("C-x p" . mt)
-  :config
-  (defun mt-buffer-list ()
-    "Retrieve buffers list."
-    (if (projectile-project-p)
-	(projectile-project-buffers)
-      (buffer-list)))
-
-  (defun mt-launch-term ()
-    "Launch new terminal."
-    (if (projectile-project-p)
-	(cd (projectile-project-root)))
-
-    (call-interactively 'multi-vterm)))
+  ("C-x p" . mt))
 #+END_SRC
 
 Other completion functions
@@ -198,7 +185,8 @@ Multicursor support
 (use-package multiple-cursors
   :ensure t
   :bind
-  ("M-]" . mc/mark-next-like-this))
+  ("M-]" . mc/mark-next-like-this)
+  ("M-9" . mc/mark-next-like-this))
 #+END_SRC
 
 ** Linting
@@ -219,9 +207,7 @@ Multicursor support
 #+END_SRC
 ** Terminal support
 #+BEGIN_SRC emacs-lisp
-(use-package multi-vterm
-  :ensure t
-  :init)
+(use-package ghostel :ensure t)
 #+END_SRC
 ** Org and authoring
 
